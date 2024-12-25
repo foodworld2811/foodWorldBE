@@ -18,9 +18,11 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long categoryId;
+    @Column(nullable = false, unique = true)
     private String categoryTitle;
+    @Column(nullable = false)
     private boolean categoryStatus;
     @Lob
-    @Column(length = 1000000)
+    @Column(length = 1000000, nullable = false)
     private byte[] categoryimg;
 }
