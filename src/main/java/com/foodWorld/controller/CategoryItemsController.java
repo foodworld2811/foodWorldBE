@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,13 +26,14 @@ import com.foodWorld.service.CategoryItemsService;
 
 @RestController
 @RequestMapping("/api/categoryItems")
+@CrossOrigin(origins = "http://localhost:4200")
 public class CategoryItemsController {
 	
 	@Autowired
 	private CategoryItemsService categoryItemsServe;
 	
 	@PostMapping
-	public ResponseEntity<CategoryItems> addCategoryItems(@RequestParam String itemName, @RequestParam String itemPrice,@RequestParam String itemstatus,@RequestParam String categoryName, @RequestPart MultipartFile file) throws IOException {
+	public ResponseEntity<CategoryItems> addCategoryItems(@RequestParam String itemName, @RequestParam String itemPrice,@RequestParam boolean itemstatus,@RequestParam String categoryName, @RequestPart MultipartFile file) throws IOException {
 			CategoryItems categoryItems = new CategoryItems();
 			categoryItems.setItemName(itemName);
 			categoryItems.setItemPrice(itemPrice);
@@ -47,7 +49,7 @@ public class CategoryItemsController {
 	        @PathVariable Long id,
 	        @RequestParam(required = false) String itemName,
 	        @RequestParam(required = false) String itemPrice,
-	        @RequestParam(required = false) String itemStatus,
+	        @RequestParam(required = false) boolean itemStatus,
 	        @RequestParam(required = false) String categoryName,
 	        @RequestPart(required = false) MultipartFile file) throws IOException {
 	    
@@ -71,9 +73,8 @@ public class CategoryItemsController {
 	    if (itemPrice != null) {
 	        existingItem.setItemPrice(itemPrice);
 	    }
-	    if (itemStatus != null) {
+	    if (itemStatus == false) {
 	        existingItem.setItemstatus(itemStatus);
-	        System.out.println("Status is : "+existingItem.getItemstatus());
 	    }
 	    if (categoryName != null) {
 	        existingItem.setCategoryName(categoryName);
@@ -95,7 +96,7 @@ public class CategoryItemsController {
 		if(allCategoryItems == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();	
 		}
-		return ResponseEntity.status(HttpStatus.FOUND).body(allCategoryItems);
+		return ResponseEntity.status(HttpStatus.OK).body(allCategoryItems);
 	}
 	
 	@DeleteMapping("/{id}")

@@ -28,6 +28,7 @@ public class User {
 	String contact;
 	String address;
 	@Size(min = 8, max = 8, message = "Username must be exactly 8 characters long")
+	@Column(unique = true)
 	String username;
 	@Size(min = 8, message = "Password must be grater then 8 characters long")
 	String password;
