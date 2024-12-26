@@ -75,6 +75,50 @@ public class OrderService {
     }
     
     @Transactional
+    public Order updateOrderItems(Long orderId, List<Long> itemIds, List<Integer> quantities) {
+        if (itemIds.size() != quantities.size()) {
+            throw new IllegalArgumentException("Item IDs and quantities must have the same size.");
+        }
+
+        // Fetch the existing order
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new EntityNotFoundException("Order not found with ID: " + orderId));
+
+        // Clear existing order items
+        List<OrderItem> existingOrderItems = order.getOrderItems();
+        if (existingOrderItems != null) {
+            for (OrderItem item : existingOrderItems) {
+                orderItemRepository.delete(item);
+            }
+        }
+
+        // Add new order items
+        List<OrderItem> newOrderItems = new ArrayList<>();
+        for (int i = 0; i < itemIds.size(); i++) {
+            Long itemId = itemIds.get(i);
+            int quantity = quantities.get(i);
+
+            Optional<CategoryItems> categoryItemOptional = categoryItemsRepository.findById(itemId);
+            if (categoryItemOptional.isEmpty()) {
+                throw new IllegalArgumentException("Invalid CategoryItem ID: " + itemId);
+            }
+
+            CategoryItems categoryItem = categoryItemOptional.get();
+            OrderItem orderItem = new OrderItem();
+            orderItem.setOrder(order);
+            orderItem.setCategoryItem(categoryItem);
+            orderItem.setQuantity(quantity);
+
+            newOrderItems.add(orderItemRepository.save(orderItem));
+        }
+
+        // Update the order's items and save
+        order.setOrderItems(newOrderItems);
+        return orderRepository.save(order);
+    }
+
+    
+    @Transactional
     public Order updateOrderStatus(Long orderId, String orderStatus) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new EntityNotFoundException("Order not found with ID: " + orderId));
