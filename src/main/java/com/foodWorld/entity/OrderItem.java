@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.foodWorld.entity.Order;
 
 @Entity
@@ -28,11 +29,14 @@ public class OrderItem {
 
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
+    @JsonIgnore
     private Order order;
 
     @ManyToOne
     @JoinColumn(name = "item_id", nullable = false)
+    @JsonIgnore
     private CategoryItems categoryItem;
 
+    @JsonIgnore
     private int quantity;
 }

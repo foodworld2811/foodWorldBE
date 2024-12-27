@@ -6,30 +6,23 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Data
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryItems {
-
+public class Tables {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	long itemId;
-	@Column(nullable = false, unique = true)
-	String itemName;
-	@Column(nullable = false)
-	String itemPrice;
-	@Column(nullable = false, length = 1000000)
-	byte[] itemImage;
-	@Column(nullable = false)
-	Boolean itemstatus;
-	@Column(nullable = false)
-	String categoryName;
+	private long tableId;
+	
+	@Column(unique = true)
+	private String tableName;
+	
+	private String userName;
 }

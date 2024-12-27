@@ -1,6 +1,7 @@
 package com.foodWorld.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,8 +28,9 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<Order> createOrder(
             @RequestParam List<Long> itemIds,
-            @RequestParam List<Integer> quantities) {
-        Order createdOrder = orderService.createOrder(itemIds, quantities);
+            @RequestParam List<Integer> quantities,
+            @RequestParam String tableNumber) {
+        Order createdOrder = orderService.createOrder(itemIds, quantities, tableNumber);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdOrder);
     }
 
@@ -66,5 +68,19 @@ public class OrderController {
     public ResponseEntity<Void> deleteOrder(@PathVariable Long orderId) {
         orderService.deleteOrder(orderId);
         return ResponseEntity.noContent().build();
+    }
+    
+    @GetMapping("/tableStatus/{tableNumber}")
+    public ResponseEntity<Boolean> checkTableStatus(@PathVariable String tableNumber) {
+    	List<Order> todayOrders = orderService.getTodayOrders();    	
+    	boolean isTableFree = todayOrders.stream()
+                .filter(order -> tableNumber.equals(order.getTableNumber()))
+                .anyMatch(order -> "COMPLETED".equals(order.getOrderStatus()));
+
+        if (!isTableFree) {
+            return ResponseEntity.ok(false);  
+        }
+
+        return ResponseEntity.ok(true); 
     }
 }

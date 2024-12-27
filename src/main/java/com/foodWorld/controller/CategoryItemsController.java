@@ -52,13 +52,11 @@ public class CategoryItemsController {
 	        @RequestParam(required = false) boolean itemStatus,
 	        @RequestParam(required = false) String categoryName,
 	        @RequestPart(required = false) MultipartFile file) throws IOException {
-	    
-
-		
+	    		
 	    // Fetch the existing category item by ID
 	    Optional<CategoryItems> existingItemOptional = categoryItemsServe.findCategoryItemsById(id);
 	    
-		System.out.println("Item Status is : "+existingItemOptional.get());
+//		System.out.println("Item Status is : "+existingItemOptional.get());
 	    
 	    if (!existingItemOptional.isPresent()) {
 	        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -73,9 +71,9 @@ public class CategoryItemsController {
 	    if (itemPrice != null) {
 	        existingItem.setItemPrice(itemPrice);
 	    }
-	    if (itemStatus == false) {
-	        existingItem.setItemstatus(itemStatus);
-	    }
+	    
+        existingItem.setItemstatus(itemStatus);
+
 	    if (categoryName != null) {
 	        existingItem.setCategoryName(categoryName);
 	    }

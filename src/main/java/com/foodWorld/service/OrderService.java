@@ -3,6 +3,7 @@ package com.foodWorld.service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class OrderService {
     private CategoryItemsRepository categoryItemsRepository;
 
     @Transactional
-    public Order createOrder(List<Long> itemIds, List<Integer> quantities) {
+    public Order createOrder(List<Long> itemIds, List<Integer> quantities, String tableNumber) {
         if (itemIds.size() != quantities.size()) {
             throw new IllegalArgumentException("Item IDs and quantities must have the same size.");
         }
@@ -39,6 +40,7 @@ public class OrderService {
         Order order = new Order();
         order.setOrderDate(LocalDate.now());
         order.setOrderStatus("ACTIVE");
+        order.setTableNumber(tableNumber);
         Order savedOrder = orderRepository.save(order);
 
         List<OrderItem> orderItems = new ArrayList<>();
@@ -133,5 +135,15 @@ public class OrderService {
                 .orElseThrow(() -> new EntityNotFoundException("Order not found with ID: " + orderId));
 
         orderRepository.delete(order);
+    }
+    
+    public List<Order> getTodayOrders() {
+        LocalDate today = LocalDate.now();
+        List<Order> todayOrders = orderRepository.findByOrderDate(today);
+
+        if (todayOrders.isEmpty()) {
+        	throw new NoSuchElementException("No orders found for today.");
+        } 
+        return todayOrders;
     }
 }

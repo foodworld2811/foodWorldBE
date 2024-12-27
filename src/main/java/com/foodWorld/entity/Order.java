@@ -41,4 +41,7 @@ public class Order {
     
     @Column(nullable = false)
     private String orderStatus = "ACTIVE";
+    
+    @Column(nullable = false)
+    private String tableNumber;
 }
