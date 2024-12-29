@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.foodWorld.entity.Order;
 import com.foodWorld.entity.OrderItem;
+import com.foodWorld.entity.OrderItemResponseDTO;
 import com.foodWorld.service.OrderService;
 
 @RestController
@@ -110,8 +111,23 @@ public class OrderController {
 
     
     @GetMapping("/items/{orderId}")
-    public List<OrderItem> getOrderItems(@PathVariable long orderId) {
-    	List<OrderItem> orderItems = orderService.getAllOrderItems();
-    	return orderItems.stream().filter(item -> item.getOrder().getOrderId() == orderId).collect(Collectors.toList());
+    public List<OrderItemResponseDTO> getOrderItems(@PathVariable long orderId) {
+        List<OrderItem> orderItems = orderService.getAllOrderItems();
+        return orderItems.stream()
+                .filter(item -> item.getOrder().getOrderId() == orderId)
+                .map(item -> {
+                    OrderItemResponseDTO dto = new OrderItemResponseDTO();
+                    dto.setCategoryName(item.getCategoryItem().getCategoryName());
+                    dto.setQuantity(item.getQuantity());
+                    dto.setItemId(item.getCategoryItem().getItemId());
+                    dto.setItemImage(item.getCategoryItem().getItemImage());
+                    dto.setItemName(item.getCategoryItem().getItemName());
+                    dto.setItemPrice(item.getCategoryItem().getItemPrice());
+                    dto.setItemStatus(item.getCategoryItem().isItemstatus());
+                    dto.setTableNumber(item.getOrder().getTableNumber());
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
+
 }

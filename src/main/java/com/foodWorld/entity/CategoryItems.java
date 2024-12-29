@@ -29,7 +29,7 @@ public class CategoryItems {
 	@Column(nullable = false, length = 1000000)
 	byte[] itemImage;
 	@Column(nullable = false)
-	Boolean itemstatus;
+	boolean itemstatus;
 	@Column(nullable = false)
 	String categoryName;
 }
