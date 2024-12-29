@@ -141,9 +141,19 @@ public class OrderService {
         LocalDate today = LocalDate.now();
         List<Order> todayOrders = orderRepository.findByOrderDate(today);
 
-        if (todayOrders.isEmpty()) {
-        	throw new NoSuchElementException("No orders found for today.");
-        } 
+//        if (todayOrders.isEmpty()) {
+//        	throw new NoSuchElementException("No orders found for today.");
+//        } 
         return todayOrders;
     }
+    
+    public List<OrderItem> getAllOrderItems() {
+        List<OrderItem> listItems = orderItemRepository.findAll();
+//        System.out.println("List of items in service:");
+//        listItems.forEach(item -> 
+//            System.out.println("OrderItemId: " + item.getOrderItemId() + ", ItemName: " + item.getCategoryItem())
+//        );
+        return listItems;
+    }
+
 }

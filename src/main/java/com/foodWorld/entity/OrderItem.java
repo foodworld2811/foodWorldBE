@@ -34,9 +34,16 @@ public class OrderItem {
 
     @ManyToOne
     @JoinColumn(name = "item_id", nullable = false)
-    @JsonIgnore
+//    @JsonIgnore
     private CategoryItems categoryItem;
 
-    @JsonIgnore
+//    @JsonIgnore
     private int quantity;
+    
+    public String getItemName() {
+        return categoryItem != null ? categoryItem.getItemName() : null;
+    }
+    public String getItemPrice() {
+        return categoryItem != null ? categoryItem.getItemPrice() : null;
+    }
 }

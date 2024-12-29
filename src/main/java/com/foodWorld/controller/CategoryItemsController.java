@@ -33,11 +33,11 @@ public class CategoryItemsController {
 	private CategoryItemsService categoryItemsServe;
 	
 	@PostMapping
-	public ResponseEntity<CategoryItems> addCategoryItems(@RequestParam String itemName, @RequestParam String itemPrice,@RequestParam boolean itemstatus,@RequestParam String categoryName, @RequestPart MultipartFile file) throws IOException {
+	public ResponseEntity<CategoryItems> addCategoryItems(@RequestParam String itemName, @RequestParam String itemPrice,@RequestParam boolean itemStatus,@RequestParam String categoryName, @RequestPart MultipartFile file) throws IOException {
 			CategoryItems categoryItems = new CategoryItems();
 			categoryItems.setItemName(itemName);
 			categoryItems.setItemPrice(itemPrice);
-			categoryItems.setItemstatus(itemstatus);
+			categoryItems.setItemstatus(itemStatus);
 			categoryItems.setCategoryName(categoryName);
 			categoryItems.setItemImage(file.getBytes());
 			CategoryItems savedItem = categoryItemsServe.addCategoryItems(categoryItems);
