@@ -20,6 +20,7 @@ import com.foodWorld.entity.Order;
 import com.foodWorld.entity.OrderItem;
 import com.foodWorld.entity.OrderItemResponseDTO;
 import com.foodWorld.service.OrderService;
+import com.foodWorld.service.SendEmailService;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -28,6 +29,9 @@ public class OrderController {
 
     @Autowired
     private OrderService orderService;
+    
+    @Autowired
+    private SendEmailService emailService;
 
     @PostMapping
     public ResponseEntity<Order> createOrder(
@@ -35,6 +39,12 @@ public class OrderController {
             @RequestParam List<Integer> quantities,
             @RequestParam String tableNumber) {
         Order createdOrder = orderService.createOrder(itemIds, quantities, tableNumber);
+        
+        String subject = "Order Details for Table Number: " + tableNumber;
+        String body = buildOrderDetailsEmail(createdOrder);
+
+        // Send email
+        emailService.sendEmail(subject, body);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdOrder);
     }
 
@@ -112,6 +122,27 @@ public class OrderController {
                     return dto;
                 })
                 .collect(Collectors.toList());
+    }
+
+    private String buildOrderDetailsEmail(Order order) {
+        StringBuilder emailBody = new StringBuilder();
+        emailBody.append("<h2>Order Details for Table Number: ").append(order.getTableNumber()).append("</h2>");
+        emailBody.append("<p><strong>Order Date:</strong> ").append(order.getOrderDate()).append("</p>");
+        emailBody.append("<h3>Items Ordered:</h3>");
+        emailBody.append("<ul>");
+
+        for (OrderItem orderItem : order.getOrderItems()) {
+            emailBody.append("<li>")
+                     .append(orderItem.getItemName())
+                     .append(" : ").append(orderItem.getQuantity()).append("")
+                     .append("</li>");
+        }
+
+        emailBody.append("</ul>");
+        emailBody.append("<p>Thanks,</p>");
+        emailBody.append("<p><strong>Your Restaurant Team</strong></p>");
+
+        return emailBody.toString();
     }
 
 }
