@@ -73,24 +73,7 @@ public class OrderController {
         orderService.deleteOrder(orderId);
         return ResponseEntity.noContent().build();
     }
-    
-//    @GetMapping("/tableStatus/{tableNumber}")
-//    public ResponseEntity<Boolean> checkTableStatus(@PathVariable String tableNumber) {
-//    	List<Order> todayOrders = orderService.getTodayOrders();
-//    	if(todayOrders == null) {
-//    		return ResponseEntity.ok(true);
-//    	}
-//    	
-//    	boolean isTableFree = isTableFree = todayOrders.stream()
-//                .filter(order -> tableNumber.equals(order.getTableNumber()))
-//                .anyMatch(order -> "COMPLETED".equals(order.getOrderStatus()));
-//
-//        if (!isTableFree) {
-//            return ResponseEntity.ok(false);  
-//        }
-//
-//        return ResponseEntity.ok(true); 
-//    }
+   
     
     @GetMapping("/tableStatus/{tableNumber}")
     public ResponseEntity<Boolean> checkTableStatus(@PathVariable String tableNumber) {
@@ -125,6 +108,7 @@ public class OrderController {
                     dto.setItemPrice(item.getCategoryItem().getItemPrice());
                     dto.setItemStatus(item.getCategoryItem().isItemstatus());
                     dto.setTableNumber(item.getOrder().getTableNumber());
+                    dto.setOrderId(orderId);
                     return dto;
                 })
                 .collect(Collectors.toList());

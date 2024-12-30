@@ -21,4 +21,5 @@ public class OrderItemResponseDTO {
     private String itemPrice;
     private boolean itemStatus;
     private String tableNumber;
+    private long orderId;
 }
