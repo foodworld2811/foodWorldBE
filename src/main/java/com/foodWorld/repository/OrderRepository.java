@@ -12,4 +12,5 @@ import com.foodWorld.entity.Order;
 public interface OrderRepository extends JpaRepository<Order, Long>{
 
 	List<Order> findByOrderDate(LocalDate orderDate);
+	List<Order> findByCreatedBy(String createdBy);
 }

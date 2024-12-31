@@ -1,5 +1,7 @@
 package com.foodWorld.controller;
 
+import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,20 +39,25 @@ public class OrderController {
     public ResponseEntity<Order> createOrder(
             @RequestParam List<Long> itemIds,
             @RequestParam List<Integer> quantities,
-            @RequestParam String tableNumber) {
-        Order createdOrder = orderService.createOrder(itemIds, quantities, tableNumber);
+            @RequestParam String tableNumber,
+            @RequestParam String createdBy) {
+        Order createdOrder = orderService.createOrder(itemIds, quantities, tableNumber, createdBy);
         
-        String subject = "Order Details for Table Number: " + tableNumber;
-        String body = buildOrderDetailsEmail(createdOrder);
+        if(createdOrder != null) {
+        	String subject = "Order Details for Table Number: " + tableNumber;
+            String body = buildOrderDetailsEmail(createdOrder);
 
-        // Send email
-        emailService.sendEmail(subject, body);
+            // Send email
+            emailService.sendEmail(subject, body);
+        }
+        
+        
         return ResponseEntity.status(HttpStatus.CREATED).body(createdOrder);
     }
 
     @GetMapping("/{orderId}")
     public ResponseEntity<Order> getOrder(@PathVariable Long orderId) {
-        Order order = orderService.getOrder(orderId);
+        Order order = orderService.getOrderById(orderId);
         return ResponseEntity.ok(order);
     }
     
@@ -144,5 +151,32 @@ public class OrderController {
 
         return emailBody.toString();
     }
+    
+    @GetMapping("/user/{userName}")
+    public ResponseEntity<List<Order>> getTodayOrdersByUserName(@PathVariable String userName) {
+        if (userName == null || userName.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(Collections.emptyList());
+        }
+
+        System.out.println("Get orders by user called: " + userName);
+
+        // Retrieve today's orders
+        List<Order> todayOrders = orderService.getTodayOrders();
+
+        if (todayOrders == null || todayOrders.isEmpty()) {
+            System.out.println("No orders found for today.");
+            return ResponseEntity.ok(Collections.emptyList());
+        }
+
+        // Filter orders by the given username and status 'ACTIVE'
+        List<Order> userOrders = todayOrders.stream()
+                .filter(order -> userName.equals(order.getCreatedBy()) && "ACTIVE".equals(order.getOrderStatus()))
+                .collect(Collectors.toList());
+
+        System.out.println("Active orders count by user " + userName + ": " + userOrders.size());
+        return ResponseEntity.ok(userOrders);
+    }
+
+
 
 }

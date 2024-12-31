@@ -16,6 +16,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import com.foodWorld.entity.OrderItem;
 
@@ -26,6 +27,7 @@ import com.foodWorld.entity.OrderItem;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class Order {
 
 	@Id
@@ -44,4 +46,7 @@ public class Order {
     
     @Column(nullable = false)
     private String tableNumber;
+    
+    @Column(nullable = false)
+    private String createdBy;
 }

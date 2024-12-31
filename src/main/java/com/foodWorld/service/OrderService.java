@@ -32,7 +32,7 @@ public class OrderService {
     private CategoryItemsRepository categoryItemsRepository;
 
     @Transactional
-    public Order createOrder(List<Long> itemIds, List<Integer> quantities, String tableNumber) {
+    public Order createOrder(List<Long> itemIds, List<Integer> quantities, String tableNumber, String createdBy) {
         if (itemIds.size() != quantities.size()) {
             throw new IllegalArgumentException("Item IDs and quantities must have the same size.");
         }
@@ -41,6 +41,7 @@ public class OrderService {
         order.setOrderDate(LocalDate.now());
         order.setOrderStatus("ACTIVE");
         order.setTableNumber(tableNumber);
+        order.setCreatedBy(createdBy);
         Order savedOrder = orderRepository.save(order);
 
         List<OrderItem> orderItems = new ArrayList<>();
@@ -66,7 +67,7 @@ public class OrderService {
         return orderRepository.save(savedOrder);
     }
 
-    public Order getOrder(Long orderId) {
+    public Order getOrderById(Long orderId) {
         return orderRepository.findById(orderId)
                 .orElseThrow(() -> new EntityNotFoundException("Order not found with ID: " + orderId));
     }
@@ -140,20 +141,16 @@ public class OrderService {
     public List<Order> getTodayOrders() {
         LocalDate today = LocalDate.now();
         List<Order> todayOrders = orderRepository.findByOrderDate(today);
-
-//        if (todayOrders.isEmpty()) {
-//        	throw new NoSuchElementException("No orders found for today.");
-//        } 
         return todayOrders;
     }
     
     public List<OrderItem> getAllOrderItems() {
         List<OrderItem> listItems = orderItemRepository.findAll();
-//        System.out.println("List of items in service:");
-//        listItems.forEach(item -> 
-//            System.out.println("OrderItemId: " + item.getOrderItemId() + ", ItemName: " + item.getCategoryItem())
-//        );
         return listItems;
+    }
+    
+    public List<Order> getOrdersByUserName(String userName) {
+        return orderRepository.findByCreatedBy(userName);
     }
 
 }
