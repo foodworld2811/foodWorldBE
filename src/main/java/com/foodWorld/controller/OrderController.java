@@ -177,6 +177,17 @@ public class OrderController {
         return ResponseEntity.ok(userOrders);
     }
 
+    @GetMapping("/between")
+    public List<Order> getOrdersBetweenDates(
+            @RequestParam("startDate") String startDate,
+            @RequestParam("endDate") String endDate) {
+        
+
+        LocalDate start = LocalDate.parse(startDate);
+        LocalDate end = LocalDate.parse(endDate);
+        return orderService.getOrdersByDateRange(start, end);
+    }
+
 
 
 }

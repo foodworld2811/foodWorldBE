@@ -1,15 +1,21 @@
 package com.foodWorld.entity;
 
+import java.util.Collection;
+import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.*;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import jakarta.validation.constraints.Size;
 
 @Data
 @Setter
@@ -32,4 +38,7 @@ public class User {
 	String username;
 	@Size(min = 8, message = "Password must be grater then 8 characters long")
 	String password;
+	public Collection<? extends GrantedAuthority> getAuthorities(){
+		return List.of();
+	}
 }

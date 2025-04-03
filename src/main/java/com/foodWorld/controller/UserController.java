@@ -65,7 +65,8 @@ public class UserController {
     }
 
 
-    @PostMapping
+
+    @PostMapping("/addUser")
     public ResponseEntity<User> addUser(@RequestBody User user) {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -75,7 +76,8 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
- 
+    
+    
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
         Optional<User> existingUser = userService.getUserById(id);

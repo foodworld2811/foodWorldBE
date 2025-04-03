@@ -3,6 +3,8 @@ package com.foodWorld.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,29 +12,42 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.foodWorld.entity.LoginRequest;
 import com.foodWorld.exception.InvalidCredentialsException;
-import com.foodWorld.exception.UsernameNotFoundException;
 import com.foodWorld.service.LoginService;
+import com.foodWorld.util.jwt.JwtUtil;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "http://localhost:4200")
 public class LoginController {
 
 	@Autowired
 	private LoginService loginServe;
+
+	@Autowired
+	private JwtUtil jwtUtil;
 	
 	@PostMapping("/login")
-	public ResponseEntity<?> validateLogin(@RequestBody LoginRequest loginRequest) {
-	    try {
-	        LoginRequest user = loginServe.loginValidate(loginRequest);
-	        return ResponseEntity.ok(user); // Return the validated LoginRequest object
-	    } catch (UsernameNotFoundException e) {
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + e.getMessage());
-	    } catch (InvalidCredentialsException e) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Error: " + e.getMessage());
-	    } catch (Exception e) {
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: Something went wrong");
-	    }
+	public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest)throws Exception {
+		try {
+			if(!loginServe.validateUser(loginRequest)) {
+				throw new InvalidCredentialsException("Invalid username or password");
+			}
+			String token = jwtUtil.generateToken(loginRequest.getUsername());
+			return ResponseEntity.ok(new loginResponse(token));
+		}catch (BadCredentialsException e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+		}
 	}
-
+	
+	 @PostMapping("/validate-token")
+	    public ResponseEntity<Boolean> validateToken(String token) {
+	        try {	      
+	            String username = jwtUtil.extractUsername(token);
+	            boolean isValid = jwtUtil.validateToken(token, username);
+	            return ResponseEntity.ok(isValid);
+	        } catch (Exception e) {
+	            return ResponseEntity.ok(false);
+	        }
+	    }
 
 }

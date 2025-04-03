@@ -153,4 +153,8 @@ public class OrderService {
         return orderRepository.findByCreatedBy(userName);
     }
 
+    public List<Order> getOrdersByDateRange(LocalDate startDate, LocalDate endDate) {
+        return orderRepository.findByOrderDateBetween(startDate, endDate);
+    }
+
 }
